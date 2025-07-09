@@ -206,6 +206,7 @@ watchRoutes.post("/api/admin/watches", authMiddleware, async (ctx) => {
       market_price: body.market_price ? parseInt(body.market_price) : null,
       description: body.description || "",
       image: body.image || "⌚",
+      image_url: body.image_url || null,
       accessories: body.accessories || "",
       watch_charts_uuid: body.watch_charts_uuid || null,
       status: body.status || "available"
@@ -264,6 +265,7 @@ watchRoutes.put("/api/admin/watches/:id", authMiddleware, async (ctx) => {
     if (body.market_price !== undefined) updateData.market_price = body.market_price ? parseInt(body.market_price) : null;
     if (body.description !== undefined) updateData.description = body.description;
     if (body.image) updateData.image = body.image;
+    if (body.image_url !== undefined) updateData.image_url = body.image_url;
     if (body.accessories !== undefined) updateData.accessories = body.accessories;
     if (body.watch_charts_uuid !== undefined) updateData.watch_charts_uuid = body.watch_charts_uuid;
     if (body.status) updateData.status = body.status;

@@ -17,6 +17,7 @@ export async function initializeDatabase(db: Database) {
       market_price INTEGER,
       description TEXT,
       image TEXT DEFAULT '⌚',
+      image_url TEXT,
       accessories TEXT,
       watch_charts_uuid TEXT,
       status TEXT DEFAULT 'available',
@@ -24,6 +25,13 @@ export async function initializeDatabase(db: Database) {
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `);
+
+  // Add image_url column if it doesn't exist (for existing databases)
+  try {
+    db.exec(`ALTER TABLE watches ADD COLUMN image_url TEXT`);
+  } catch {
+    // Column already exists or other error, ignore
+  }
 
   // Create inquiries table
   db.exec(`
