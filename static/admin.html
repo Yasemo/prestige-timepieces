@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Prestige Timepieces</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-black: #0a0a0a;
+            --secondary-black: #1a1a1a;
+            --accent-gold: #d4af37;
+            --light-gold: #f4e5a1;
+            --pure-white: #ffffff;
+            --soft-gray: #e5e5e5;
+            --border-gray: #333;
+            --red: #dc3545;
+            --green: #28a745;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, var(--primary-black) 0%, var(--secondary-black) 100%);
+            color: var(--pure-white);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .admin-header {
+            background: rgba(10, 10, 10, 0.95);
+            border-bottom: 1px solid var(--border-gray);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .admin-title {
+            font-size: 1.5rem;
+            color: var(--accent-gold);
+            font-weight: bold;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            background: var(--accent-gold);
+            color: var(--primary-black);
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 25px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: var(--light-gold);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--pure-white);
+            border: 1px solid var(--border-gray);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border-gray);
+        }
+
+        .btn-danger {
+            background: var(--red);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-success {
+            background: var(--green);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .admin-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border-gray);
+        }
+
+        .tab-button {
+            background: transparent;
+            color: var(--soft-gray);
+            border: none;
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab-button.active {
+            color: var(--accent-gold);
+            border-bottom-color: var(--accent-gold);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .watch-table {
+            background: rgba(26, 26, 26, 0.8);
+            border-radius: 15px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .table-header {
+            background: var(--accent-gold);
+            color: var(--primary-black);
+            padding: 1rem;
+            font-weight: bold;
+        }
+
+        .table-body {
+            padding: 1rem;
+        }
+
+        .watch-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr auto;
+            gap: 1rem;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-gray);
+        }
+
+        .watch-row:last-child {
+            border-bottom: none;
+        }
+
+        .watch-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-small {
+            padding: 0.3rem 0.8rem;
+            font-size: 0.8rem;
+            border-radius: 15px;
+        }
+
+        .form-section {
+            background: rgba(26, 26, 26, 0.8);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-top: 1rem;
+        }
+
+        .form-title {
+            color: var(--accent-gold);
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--pure-white);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            background: rgba(10, 10, 10, 0.8);
+            border: 1px solid var(--border-gray);
+            border-radius: 8px;
+            color: var(--pure-white);
+            font-size: 1rem;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+        }
+
+        .search-section {
+            background: rgba(26, 26, 26, 0.8);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .search-results {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 1rem;
+        }
+
+        .search-result-item {
+            background: rgba(10, 10, 10, 0.5);
+            border: 1px solid var(--border-gray);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .search-result-item:hover {
+            border-color: var(--accent-gold);
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .search-result-item.selected {
+            border-color: var(--accent-gold);
+            background: rgba(212, 175, 55, 0.2);
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--border-gray);
+            border-radius: 50%;
+            border-top-color: var(--accent-gold);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .message.success {
+            background: rgba(40, 167, 69, 0.2);
+            border: 1px solid #28a745;
+            color: #28a745;
+        }
+
+        .message.error {
+            background: rgba(220, 53, 69, 0.2);
+            border: 1px solid #dc3545;
+            color: #dc3545;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(26, 26, 26, 0.8);
+            border: 1px solid var(--border-gray);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            color: var(--accent-gold);
+            font-weight: bold;
+            display: block;
+        }
+
+        .stat-label {
+            color: var(--soft-gray);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .watch-row {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="admin-header">
+        <div class="header-container">
+            <div class="admin-title">🏆 Prestige Timepieces Admin</div>
+            <div class="header-actions">
+                <a href="#" class="btn btn-secondary" onclick="window.open('/', '_blank')">View Site</a>
+                <button class="btn" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <!-- Dashboard Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-number" id="totalWatches">4</span>
+                <div class="stat-label">Total Watches</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="totalValue">$67,200</span>
+                <div class="stat-label">Total Inventory Value</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="avgPrice">$16,800</span>
+                <div class="stat-label">Average Price</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="recentInquiries">12</span>
+                <div class="stat-label">Recent Inquiries</div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="admin-tabs">
+            <button class="tab-button active" onclick="switchTab('inventory')">Inventory Management</button>
+            <button class="tab-button" onclick="switchTab('add-watch')">Add New Watch</button>
+            <button class="tab-button" onclick="switchTab('inquiries')">Customer Inquiries</button>
+        </div>
+
+        <!-- Inventory Tab -->
+        <div id="inventory" class="tab-content active">
+            <div class="watch-table">
+                <div class="table-header">Current Inventory</div>
+                <div class="table-body">
+                    <div class="watch-row" style="font-weight: bold; color: var(--accent-gold);">
+                        <div>Brand & Model</div>
+                        <div>Reference</div>
+                        <div>Year</div>
+                        <div>Condition</div>
+                        <div>Price</div>
+                        <div>Actions</div>
+                    </div>
+                    <div id="inventoryList">
+                        <!-- Inventory items will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Watch Tab -->
+        <div id="add-watch" class="tab-content">
+            <div class="form-section">
+                <h2 class="form-title">Add New Watch</h2>
+                
+                <!-- WatchCharts API Search -->
+                <div class="search-section">
+                    <h3 style="color: var(--accent-gold); margin-bottom: 1rem;">🔍 Search WatchCharts Database</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 1rem; align-items: end;">
+                        <div class="form-group">
+                            <label for="searchBrand">Brand</label>
+                            <select id="searchBrand">
+                                <option value="">Select Brand</option>
+                                <option value="rolex">Rolex</option>
+                                <option value="patek-philippe">Patek Philippe</option>
+                                <option value="audemars-piguet">Audemars Piguet</option>
+                                <option value="omega">Omega</option>
+                                <option value="cartier">Cartier</option>
+                                <option value="breitling">Breitling</option>
+                                <option value="tag-heuer">TAG Heuer</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="searchReference">Reference Number</label>
+                            <input type="text" id="searchReference" placeholder="e.g., 116610LN">
+                        </div>
+                        <button class="btn" onclick="searchWatchCharts()">Search</button>
+                    </div>
+                    
+                    <div class="search-results" id="searchResults">
+                        <!-- Search results will appear here -->
+                    </div>
+                </div>
+
+                <!-- Watch Form -->
+                <form id="watchForm">
+                    <div class="form-grid">
+                        <div>
+                            <div class="form-group">
+                                <label for="brand">Brand *</label>
+                                <input type="text" id="brand" name="brand" required readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="model">Model *</label>
+                                <input type="text" id="model" name="model" required readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="reference">Reference *</label>
+                                <input type="text" id="reference" name="reference" required readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="year">Year</label>
+                                <input type="number" id="year" name="year" min="1900" max="2025">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="form-group">
+                                <label for="condition">Condition *</label>
+                                <select id="condition" name="condition" required>
+                                    <option value="">Select Condition</option>
+                                    <option value="new">New/Unworn</option>
+                                    <option value="excellent">Excellent</option>
+                                    <option value="very-good">Very Good</option>
+                                    <option value="good">Good</option>
+                                    <option value="fair">Fair</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="price">Price (USD) *</label>
+                                <input type="number" id="price" name="price" required min="0" step="100">
+                            </div>
+                            <div class="form-group">
+                                <label for="marketPrice">Market Price (USD)</label>
+                                <input type="number" id="marketPrice" name="marketPrice" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="accessories">Included Accessories</label>
+                                <input type="text" id="accessories" name="accessories" placeholder="Box, papers, warranty, etc.">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" rows="4" placeholder="Detailed description of the watch..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="image">Watch Image Emoji</label>
+                        <select id="image" name="image">
+                            <option value="⌚">⌚ Classic</option>
+                            <option value="🌙">🌙 Moonwatch</option>
+                            <option value="👑">👑 Dress Watch</option>
+                            <option value="💎">💎 Luxury Sports</option>
+                            <option value="⚡">⚡ Racing</option>
+                            <option value="🌊">🌊 Dive Watch</option>
+                            <option value="✈️">✈️ GMT/Pilot</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn" style="width: 100%; margin-top: 1rem;">
+                        Add Watch to Inventory
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Inquiries Tab -->
+        <div id="inquiries" class="tab-content">
+            <div class="form-section">
+                <h2 class="form-title">Customer Inquiries</h2>
+                <div id="inquiriesList">
+                    <div style="padding: 2rem; text-align: center; color: var(--soft-gray);">
+                        📧 No inquiries yet. Customer inquiries will appear here when they submit the contact form or WhatsApp messages.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Sample data - in real app this would be from database/API
+        let watches = [
+            {
+                id: 1,
+                brand: "Rolex",
+                model: "Submariner Date",
+                reference: "116610LN",
+                year: 2019,
+                condition: "Excellent",
+                price: 12500,
+                marketPrice: 13200,
+                description: "Classic black bezel Submariner in excellent condition with box and papers.",
+                image: "⌚",
+                accessories: "Box, papers, warranty card"
+            },
+            {
+                id: 2,
+                brand: "Omega",
+                model: "Speedmaster Professional",
+                reference: "311.30.42.30.01.005",
+                year: 2020,
+                condition: "Very Good",
+                price: 4200,
+                marketPrice: 4500,
+                description: "The iconic Moonwatch with hesalite crystal and manual wind movement.",
+                image: "🌙",
+                accessories: "Box, papers"
+            },
+            {
+                id: 3,
+                brand: "Patek Philippe",
+                model: "Calatrava",
+                reference: "5196P",
+                year: 2018,
+                condition: "Excellent",
+                price: 28500,
+                marketPrice: 30000,
+                description: "Platinum dress watch with small seconds and leather strap.",
+                image: "👑",
+                accessories: "Full set"
+            },
+            {
+                id: 4,
+                brand: "Audemars Piguet",
+                model: "Royal Oak",
+                reference: "15400ST",
+                year: 2017,
+                condition: "Good",
+                price: 22000,
+                marketPrice: 24000,
+                description: "Iconic octagonal bezel sports watch in stainless steel.",
+                image: "💎",
+                accessories: "Box only"
+            }
+        ];
+
+        let nextId = 5;
+
+        // Initialize admin panel
+        document.addEventListener('DOMContentLoaded', function() {
+            loadInventory();
+            updateStats();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('watchForm').addEventListener('submit', handleWatchForm);
+        }
+
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all tab buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function loadInventory() {
+            const inventoryList = document.getElementById('inventoryList');
+            inventoryList.innerHTML = '';
+
+            watches.forEach(watch => {
+                const row = document.createElement('div');
+                row.className = 'watch-row';
+                row.innerHTML = `
+                    <div>${watch.brand} ${watch.model}</div>
+                    <div>${watch.reference}</div>
+                    <div>${watch.year || 'N/A'}</div>
+                    <div>${watch.condition}</div>
+                    <div>$${watch.price.toLocaleString()}</div>
+                    <div class="watch-actions">
+                        <button class="btn btn-small btn-secondary" onclick="editWatch(${watch.id})">Edit</button>
+                        <button class="btn btn-small btn-danger" onclick="deleteWatch(${watch.id})">Delete</button>
+                    </div>
+                `;
+                inventoryList.appendChild(row);
+            });
+        }
+
+        function updateStats() {
+            const totalWatches = watches.length;
+            const totalValue = watches.reduce((sum, watch) => sum + watch.price, 0);
+            const avgPrice = totalValue / totalWatches;
+
+            document.getElementById('totalWatches').textContent = totalWatches;
+            document.getElementById('totalValue').textContent = '$' + totalValue.toLocaleString();
+            document.getElementById('avgPrice').textContent = '$' + Math.round(avgPrice).toLocaleString();
+        }
+
+        function searchWatchCharts() {
+            const brand = document.getElementById('searchBrand').value;
+            const reference = document.getElementById('searchReference').value;
+            
+            if (!brand || !reference) {
+                showMessage('Please select a brand and enter a reference number.', 'error');
+                return;
+            }
+
+            const resultsDiv = document.getElementById('searchResults');
+            resultsDiv.innerHTML = '<div style="text-align: center; padding: 1rem;"><span class="loading"></span> Searching WatchCharts database...</div>';
+
+            // Simulate API call to WatchCharts
+            setTimeout(() => {
+                const mockResults = generateMockSearchResults(brand, reference);
+                displaySearchResults(mockResults);
+            }, 2000);
+        }
+
+        function generateMockSearchResults(brand, reference) {
+            // Mock WatchCharts API response
+            const brandNames = {
+                'rolex': 'Rolex',
+                'patek-philippe': 'Patek Philippe',
+                'audemars-piguet': 'Audemars Piguet',
+                'omega': 'Omega',
+                'cartier': 'Cartier',
+                'breitling': 'Breitling',
+                'tag-heuer': 'TAG Heuer'
+            };
+
+            const models = {
+                'rolex': ['Submariner Date', 'GMT-Master II', 'Daytona', 'Datejust'],
+                'omega': ['Speedmaster Professional', 'Seamaster', 'Constellation'],
+                'patek-philippe': ['Calatrava', 'Nautilus', 'Aquanaut'],
+                'audemars-piguet': ['Royal Oak', 'Royal Oak Offshore'],
+                'cartier': ['Tank', 'Santos', 'Ballon Bleu'],
+                'breitling': ['Navitimer', 'Superocean', 'Avenger'],
+                'tag-heuer': ['Carrera', 'Formula 1', 'Monaco']
+            };
+
+            return [
+                {
+                    uuid: 'mock-uuid-1',
+                    brand: brandNames[brand],
+                    model: models[brand][0],
+                    reference: reference,
+                    marketPrice: Math.floor(Math.random() * 50000) + 5000,
+                    description: `${brandNames[brand]} ${models[brand][0]} ${reference}`
+                }
+            ];
+        }
+
+        function displaySearchResults(results) {
+            const resultsDiv = document.getElementById('searchResults');
+            
+            if (results.length === 0) {
+                resultsDiv.innerHTML = '<div style="text-align: center; padding: 1rem; color: var(--soft-gray);">No results found. Try a different reference number.</div>';
+                return;
+            }
+
+            resultsDiv.innerHTML = '<h4 style="color: var(--accent-gold); margin-bottom: 0.5rem;">Search Results:</h4>';
+            
+            results.forEach((result, index) => {
+                const item = document.createElement('div');
+                item.className = 'search-result-item';
+                item.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong>${result.brand} ${result.model}</strong><br>
+                            <span style="color: var(--soft-gray);">Ref: ${result.reference}</span><br>
+                            <span style="color: var(--accent-gold);">Market Price: $${result.marketPrice.toLocaleString()}</span>
+                        </div>
+                        <button class="btn btn-small" onclick="selectWatchFromSearch(${index})">Select</button>
+                    </div>
+                `;
+                resultsDiv.appendChild(item);
+            });
+
+            // Store results for later use
+            window.currentSearchResults = results;
+        }
+
+        function selectWatchFromSearch(index) {
+            const selected = window.currentSearchResults[index];
+            
+            // Populate form with selected watch data
+            document.getElementById('brand').value = selected.brand;
+            document.getElementById('model').value = selected.model;
+            document.getElementById('reference').value = selected.reference;
+            document.getElementById('marketPrice').value = selected.marketPrice;
+            document.getElementById('price').value = Math.floor(selected.marketPrice * 0.9); // Suggest 10% below market
+
+            // Visual feedback
+            document.querySelectorAll('.search-result-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            document.querySelectorAll('.search-result-item')[index].classList.add('selected');
+
+            showMessage('Watch data loaded from WatchCharts! Please complete the remaining fields.', 'success');
+        }
+
+        function handleWatchForm(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const watchData = {
+                id: nextId++,
+                brand: formData.get('brand'),
+                model: formData.get('model'),
+                reference: formData.get('reference'),
+                year: parseInt(formData.get('year')) || null,
+                condition: formData.get('condition'),
+                price: parseInt(formData.get('price')),
+                marketPrice: parseInt(formData.get('marketPrice')) || null,
+                description: formData.get('description'),
+                image: formData.get('image'),
+                accessories: formData.get('accessories')
+            };
+
+            // Add to watches array
+            watches.push(watchData);
+            
+            // Update displays
+            loadInventory();
+            updateStats();
+            
+            // Reset form
+            event.target.reset();
+            document.getElementById('searchResults').innerHTML = '';
+            
+            // Make form fields editable again
+            document.getElementById('brand').readOnly = false;
+            document.getElementById('model').readOnly = false;
+            document.getElementById('reference').readOnly = false;
+            
+            showMessage('Watch added successfully!', 'success');
+        }
+
+        function editWatch(id) {
+            const watch = watches.find(w => w.id === id);
+            if (!watch) return;
+
+            // Switch to add-watch tab
+            switchTab('add-watch');
+            document.querySelectorAll('.tab-button')[1].classList.add('active');
+
+            // Populate form
+            document.getElementById('brand').value = watch.brand;
+            document.getElementById('model').value = watch.model;
+            document.getElementById('reference').value = watch.reference;
+            document.getElementById('year').value = watch.year || '';
+            document.getElementById('condition').value = watch.condition;
+            document.getElementById('price').value = watch.price;
+            document.getElementById('marketPrice').value = watch.marketPrice || '';
+            document.getElementById('description').value = watch.description;
+            document.getElementById('image').value = watch.image;
+            document.getElementById('accessories').value = watch.accessories || '';
+
+            // Make fields editable
+            document.getElementById('brand').readOnly = false;
+            document.getElementById('model').readOnly = false;
+            document.getElementById('reference').readOnly = false;
+
+            // Change form submit to update
+            const form = document.getElementById('watchForm');
+            form.onsubmit = function(e) {
+                e.preventDefault();
+                updateWatch(id, form);
+            };
+
+            showMessage('Editing mode activated. Make your changes and submit.', 'success');
+        }
+
+        function updateWatch(id, form) {
+            const formData = new FormData(form);
+            const watchIndex = watches.findIndex(w => w.id === id);
+            
+            if (watchIndex === -1) return;
+
+            watches[watchIndex] = {
+                ...watches[watchIndex],
+                brand: formData.get('brand'),
+                model: formData.get('model'),
+                reference: formData.get('reference'),
+                year: parseInt(formData.get('year')) || null,
+                condition: formData.get('condition'),
+                price: parseInt(formData.get('price')),
+                marketPrice: parseInt(formData.get('marketPrice')) || null,
+                description: formData.get('description'),
+                image: formData.get('image'),
+                accessories: formData.get('accessories')
+            };
+
+            loadInventory();
+            updateStats();
+            form.reset();
+            
+            // Reset form submit handler
+            form.onsubmit = handleWatchForm;
+            
+            showMessage('Watch updated successfully!', 'success');
+        }
+
+        function deleteWatch(id) {
+            if (confirm('Are you sure you want to delete this watch?')) {
+                watches = watches.filter(w => w.id !== id);
+                loadInventory();
+                updateStats();
+                showMessage('Watch deleted successfully!', 'success');
+            }
+        }
+
+        function showMessage(text, type) {
+            const existingMessage = document.querySelector('.message');
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+
+            const message = document.createElement('div');
+            message.className = `message ${type}`;
+            message.textContent = text;
+            
+            const mainContent = document.querySelector('.main-content');
+            mainContent.insertBefore(message, mainContent.firstChild);
+
+            setTimeout(() => {
+                message.remove();
+            }, 5000);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.close();
+            }
+        }
+    </script>
+</body>
+</html>
